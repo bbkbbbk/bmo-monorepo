@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: bmo-client-container
-          image: eu.gcr.io/bot-bmo/bmo-client-app
+          image: eu.gcr.io/bot-bmo/bmo-client-app:latest
           resources:
             requests:
               cpu: 100m

@@ -1,12 +1,18 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import CreateSet from '../views/CreateSet.vue';
+import BMO from '../views/BMO.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
+    name: 'BMO',
+    component: BMO,
+  },
+  {
+    path: '/create',
     name: 'Create Set',
     component: CreateSet,
   },
