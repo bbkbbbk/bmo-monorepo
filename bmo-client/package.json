@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@line/liff": "^2.4.0",
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
@@ -52,7 +54,8 @@
     },
     "rules": {
       "max-len": "off",
-      "lines-between-class-members": "off"
+      "lines-between-class-members": "off",
+      "no-unused-expressions": "warn"
     },
     "overrides": [
       {

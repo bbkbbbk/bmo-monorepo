@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bmo-client
+  namespace: bot-bmo-alpha
+spec:
+  selector:
+    matchLabels:
+      app: bmo-client
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: bmo-client
+    spec:
+      containers:
+        - name: bmo-client-container
+          image: eu.gcr.io/bot-bmo/bmo-client-app
+          resources:
+            requests:
+              cpu: 100m
+              memory: 300Mi
+          imagePullPolicy: Always

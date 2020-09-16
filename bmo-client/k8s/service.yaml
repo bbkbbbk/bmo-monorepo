@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bmo-client
+  namespace: bot-bmo-alpha
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v1
+      kind: Mapping
+      name: bmo-client-mapping
+      prefix: /
+      service: bmo-client:80
+      resolver: endpoint
+      retry_policy:
+        num_retries: 2
+        retry_on: gateway-error
+spec:
+  selector:
+    app: bmo-client
+  type: ClusterIP
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 80

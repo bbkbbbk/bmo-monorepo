@@ -1,3 +1,4 @@
+import liff from '@line/liff';
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
@@ -5,6 +6,8 @@ import store from './store';
 import '@/assets/css/tailwind.css';
 
 Vue.config.productionTip = false;
+
+liff.init({ liffId: '1654884738-E86rnXkO' });
 
 new Vue({
   router,
