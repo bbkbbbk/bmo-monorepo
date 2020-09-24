@@ -1,0 +1,39 @@
+syntax = "proto3";
+package v1;
+
+message Card {
+    string term = 1;
+    string definition = 2;
+    int32 weight = 3;
+}
+
+message CardSet {
+    string id = 1;
+    string title = 2;
+    int32 num_cards = 3;
+    repeated Card cards = 4;
+}
+
+message InsertCardSetRequest {
+    string id = 1;
+    string user_id = 2;
+    string title = 3;
+    repeated Card cards = 5;
+}
+
+message InsertCardSetResponse {
+    CardSet card_set = 1;
+}
+
+message FetchCardSetRequest {
+    string id = 1;
+}
+
+message FetchCardSetResponse {
+    CardSet card_set = 1;
+}
+
+service BMOService {
+    rpc InsertCardSet(InsertCardSetRequest) returns (InsertCardSetResponse);
+    rpc FetchCardSet(FetchCardSetRequest) returns (FetchCardSetResponse);
+}
