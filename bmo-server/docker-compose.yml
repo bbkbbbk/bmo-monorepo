@@ -1,0 +1,15 @@
+version: "3.5"
+
+services:
+  bmo-server:
+    image: golang:1.15.2-alpine
+    container_name: bmo-server-app
+    restart: always
+    volumes:
+      - .:/go/src/github.com/bbkbbbk/bmo-monorepo/bmo-server
+    working_dir: /go/src/github.com/bbkbbbk/bmo-monorepo/bmo-server
+    ports:
+      - 8080:8080
+    env_file:
+      - .env.local
+    command: go run ./server/main.go
