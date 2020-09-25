@@ -1,4 +1,4 @@
-package dependency
+package mongo
 
 import (
 	"context"
@@ -9,20 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type MongoConfig struct {
+type Config struct {
 	Database string
 	Host string
 	Username string
 	Password string
 }
 
-func NewMongo(c MongoConfig) *mongo.Database {
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:27017", c.Username, c.Password, c.Host)
+func NewMongo(c Config) *mongo.Database {
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:27017/?authSource=bmo", c.Username, c.Password, c.Host)
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 	if err != nil {
 		logrus.Errorf("Unable to connect database %v", err)
 	}
+	db := client.Database(c.Database)
 
-	return client.Database(c.Database)
+	return db
 }
