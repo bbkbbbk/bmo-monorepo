@@ -10,7 +10,7 @@ import (
 )
 
 func (h *newBMOServiceServer) InsertCardSet(ctx context.Context, req *proto.InsertCardSetRequest) (*proto.InsertCardSetResponse, error) {
-	for _, c := range req.GetCardSet().Cards{
+	for _, c := range req.GetCardSet().Cards {
 		c.Weight = 0
 	}
 

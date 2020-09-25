@@ -10,6 +10,7 @@ import (
 
 type Service interface {
 	InsertCardSet(ctx context.Context, cs *proto.CardSet) (string, error)
+	FetchCardSets(ctx context.Context) ([]*proto.CardSet, error)
 	FetchCardSetByID(ctx context.Context, id string) (*proto.CardSet, error)
 }
 
@@ -36,6 +37,15 @@ func (s *service) FetchCardSetByID(ctx context.Context, id string) (*proto.CardS
 	cs, err := s.repo.FetchCardSetByID(ctx, id)
 	if err != nil {
 		return nil, errors.Wrapf(err, "[s.FetchCardSetByID]: unable to find a card set id %v", id)
+	}
+
+	return cs, nil
+}
+
+func (s *service) FetchCardSets(ctx context.Context) ([]*proto.CardSet, error) {
+	cs, err := s.repo.FetchCardSets(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "[s.FetchCardSets]: unable to find card sets")
 	}
 
 	return cs, nil

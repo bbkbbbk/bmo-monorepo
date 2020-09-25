@@ -2,6 +2,8 @@ syntax = "proto3";
 package v1;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
 
 message Card {
     string term = 1;
@@ -34,7 +36,14 @@ message FetchCardSetByIDResponse {
     CardSet card_set = 1;
 }
 
+message FetchCardSetsResponse {
+    repeated CardSet card_sets = 1;
+}
+
+message EmptyRequest {}
+
 service BMOService {
     rpc InsertCardSet(InsertCardSetRequest) returns (InsertCardSetResponse);
     rpc FetchCardSetByID(FetchCardSetByIDRequest) returns (FetchCardSetByIDResponse);
+    rpc FetchCardSets(EmptyRequest) returns (FetchCardSetsResponse);
 }

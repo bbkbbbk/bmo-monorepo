@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,6 +19,7 @@ const (
 
 type Repository interface {
 	InsertCardSet(ctx context.Context, cs *proto.CardSet) (string, error)
+	FetchCardSets(ctx context.Context) ([]*proto.CardSet, error)
 	FetchCardSetByID(ctx context.Context, id string) (*proto.CardSet, error)
 }
 
@@ -68,4 +70,32 @@ func (r *repository) FetchCardSetByID(ctx context.Context, id string) (*proto.Ca
 	}
 
 	return &cardSet, nil
+}
+
+func (r *repository) FetchCardSets(ctx context.Context) ([]*proto.CardSet, error) {
+	cur, err := r.db.Collection(collectionCardSet).Find(ctx, bson.M{})
+	if err != nil {
+		return nil, errors.Wrapf(err, "[FetchCardSets]: unable to find card sets")
+	}
+	defer func(ctx context.Context, cur *mongo.Cursor) {
+		if err = cur.Close(ctx); err != nil {
+			logrus.Warnf("[r.FetchCardSets]: unable to close cursor %v", err)
+		}
+	}(ctx, cur)
+
+	cardSets := []*proto.CardSet{}
+	for cur.Next(ctx) {
+		var cs proto.CardSet
+		if err := cur.Decode(&cs); err != nil {
+			return nil, errors.Wrap(err, "[r.FetchCardSets]: unable to decode card set")
+		}
+
+		cardSets = append(cardSets, &cs)
+	}
+
+	if err := cur.Err(); err != nil {
+		return nil, errors.Wrapf(err, "[r.FetchCardSets]: unable to get current cursor")
+	}
+
+	return cardSets, nil
 }

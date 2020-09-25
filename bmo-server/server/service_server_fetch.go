@@ -2,10 +2,8 @@ package server
 
 import (
 	"context"
-
-	"github.com/pkg/errors"
-
 	proto "github.com/bbkbbbk/bmo-monorepo/bmo-server/pkg/proto/v1"
+	"github.com/pkg/errors"
 )
 
 func (h *newBMOServiceServer) FetchCardSetByID(ctx context.Context, req *proto.FetchCardSetByIDRequest) (*proto.FetchCardSetByIDResponse, error) {
@@ -19,5 +17,18 @@ func (h *newBMOServiceServer) FetchCardSetByID(ctx context.Context, req *proto.F
 	res := proto.FetchCardSetByIDResponse{
 		CardSet: cs,
 	}
+	return &res, nil
+}
+
+func (h *newBMOServiceServer) FetchCardSets(ctx context.Context, _ *proto.EmptyRequest) (*proto.FetchCardSetsResponse, error) {
+	cs, err := h.service.FetchCardSets(ctx)
+	if err != nil {
+		return nil, errors.Wrapf(err, "[h.FetchCardSets]: unable to find card sets")
+	}
+
+	res := proto.FetchCardSetsResponse{
+		CardSets: cs,
+	}
+
 	return &res, nil
 }
