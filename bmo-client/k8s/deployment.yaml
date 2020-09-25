@@ -15,9 +15,12 @@ spec:
     spec:
       containers:
         - name: bmo-client-container
-          image: eu.gcr.io/bot-bmo/bmo-client-app:latest
+          image: eu.gcr.io/bot-bmo-290008/bmo-client-app:latest
           resources:
             requests:
-              cpu: 100m
-              memory: 300Mi
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
           imagePullPolicy: Always

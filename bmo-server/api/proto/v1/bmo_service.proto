@@ -1,0 +1,49 @@
+syntax = "proto3";
+package v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+
+message Card {
+    string term = 1;
+    string definition = 2;
+    int32 weight = 3;
+}
+
+message CardSet {
+    string id = 1;
+    string title = 2;
+    int32 num_cards = 3;
+    repeated Card cards = 4;
+    google.protobuf.Timestamp lastoOpened = 5;
+}
+
+message InsertCardSetRequest {
+    string user_id = 1;
+    CardSet card_set = 2;
+}
+
+message InsertCardSetResponse {
+    string id = 1;
+}
+
+message FetchCardSetByIDRequest {
+    string id = 1;
+}
+
+message FetchCardSetByIDResponse {
+    CardSet card_set = 1;
+}
+
+message FetchCardSetsResponse {
+    repeated CardSet card_sets = 1;
+}
+
+message EmptyRequest {}
+
+service BMOService {
+    rpc InsertCardSet(InsertCardSetRequest) returns (InsertCardSetResponse);
+    rpc FetchCardSetByID(FetchCardSetByIDRequest) returns (FetchCardSetByIDResponse);
+    rpc FetchCardSets(EmptyRequest) returns (FetchCardSetsResponse);
+}
