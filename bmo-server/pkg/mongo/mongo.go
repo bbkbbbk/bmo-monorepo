@@ -17,6 +17,8 @@ type Config struct {
 }
 
 func NewMongo(c Config) *mongo.Database {
+	logrus.Info("[main]: initializing mongo connection")
+
 	uri := fmt.Sprintf("mongodb://%s:%s@%s:27017/?authSource=bmo", c.Username, c.Password, c.Host)
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
