@@ -7,9 +7,10 @@ services:
     restart: always
     volumes:
       - .:/go/src/github.com/bbkbbbk/bmo-monorepo/bmo-server
+      - $GOPATH/pkg/mod:/go/pkg/mod
     working_dir: /go/src/github.com/bbkbbbk/bmo-monorepo/bmo-server
     ports:
       - 8080:8080
     env_file:
       - .env.local
-    command: go run ./server/main.go
+    command: go run main.go
