@@ -1,22 +1,25 @@
 package server
 
 import (
-	"time"
-
+	"github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type CardSet struct {
-	ID primitive.ObjectID
-	UserID string
-	Title string
-	NumCards int32
-	Cards []Card
-	LastOpen *time.Time
+type CardSetFilter struct {
+	ID string `bson:"_id"`
 }
 
-type Card struct {
-	Term       string
-	Definition string
-	Weight     int32
+func (csf *CardSetFilter) ToBson() bson.M {
+	filter := bson.M{}
+
+	if csf.ID != "" {
+		oid, err := primitive.ObjectIDFromHex(csf.ID)
+		if err != nil {
+			logrus.Warnf("[CardSetFilter.ToBson]: unable to get oid from string %v", err)
+		}
+		filter["_id "] = oid
+	}
+
+	return filter
 }
