@@ -1,6 +1,8 @@
 syntax = "proto3";
 package v1;
 
+import "google/protobuf/timestamp.proto";
+
 message Card {
     string term = 1;
     string definition = 2;
@@ -12,28 +14,27 @@ message CardSet {
     string title = 2;
     int32 num_cards = 3;
     repeated Card cards = 4;
+    google.protobuf.Timestamp lastoOpened = 5;
 }
 
 message InsertCardSetRequest {
-    string id = 1;
-    string user_id = 2;
-    string title = 3;
-    repeated Card cards = 5;
+    string user_id = 1;
+    CardSet card_set = 2;
 }
 
 message InsertCardSetResponse {
-    CardSet card_set = 1;
-}
-
-message FetchCardSetRequest {
     string id = 1;
 }
 
-message FetchCardSetResponse {
+message FetchCardSetByIDRequest {
+    string id = 1;
+}
+
+message FetchCardSetByIDResponse {
     CardSet card_set = 1;
 }
 
 service BMOService {
     rpc InsertCardSet(InsertCardSetRequest) returns (InsertCardSetResponse);
-    rpc FetchCardSet(FetchCardSetRequest) returns (FetchCardSetResponse);
+    rpc FetchCardSetByID(FetchCardSetByIDRequest) returns (FetchCardSetByIDResponse);
 }
