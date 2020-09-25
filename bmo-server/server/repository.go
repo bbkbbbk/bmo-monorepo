@@ -2,21 +2,23 @@ package server
 
 import (
 	"context"
-	"time"
 
 	"github.com/pkg/errors"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	proto "github.com/bbkbbbk/bmo-monorepo/bmo-server/pkg/proto/v1"
 )
 
 const (
 	collectionCardSet = "card-sets"
 	collectionQuizzes = "quizzes"
-
-	defaultTimeout = 30
 )
 
 type Repository interface {
+	InsertCardSet(ctx context.Context, cs *proto.CardSet) (string, error)
+	FetchCardSetByID(ctx context.Context, id string) (*proto.CardSet, error)
 }
 
 type repository struct {
@@ -34,37 +36,35 @@ func NewRepository(db *mongo.Database) Repository {
 	}
 }
 
-func (r *repository) defaultContext() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), defaultTimeout*time.Second)
-}
-
-func (r *repository) InsertCardSet(cs CardSet) (string, error) {
-	ctx, cancel := r.defaultContext()
-	defer cancel()
-
-	doc, err := bson.Marshal(cs)
+func (r *repository) InsertCardSet(ctx context.Context, cs *proto.CardSet) (string, error) {
+	doc, err := bson.Marshal(&cs)
 	if err != nil {
-		return "", errors.Wrap(err, "[InsertCardSet]: unable to marshal a card set")
+		return "", errors.Wrap(err, "[r.InsertCardSet]: unable to marshal a card set")
 	}
 
 	result, err := r.db.Collection(collectionCardSet).InsertOne(ctx, doc)
 	if err != nil {
-		return "", errors.Wrap(err, "[InsertCardSet]: failed to insert a card set")
+		return "", errors.Wrap(err, "[r.InsertCardSet]: failed to insert a card set")
 	}
 
-	id := result.InsertedID.(string)
+	oid, ok := result.InsertedID.(primitive.ObjectID)
+	if !ok {
+		return "", errors.New("[r.InsertCardSet]: unable to parsed object id")
+	}
 
-	return id, nil
+	return oid.String(), nil
 }
 
-func (r *repository) FetchCardSet(sc SearchCondition) (*CardSet, error) {
-	ctx, cancel := r.defaultContext()
-	defer cancel()
+func (r *repository) FetchCardSetByID(ctx context.Context, id string) (*proto.CardSet, error) {
+	cf := CardSetFilter{
+		ID: id,
+	}
+	filter := cf.ToBson()
 
-	var cardSet CardSet
-	err := r.db.Collection(collectionCardSet).FindOne(ctx, sc.Filter).Decode(&cardSet)
+	var cardSet proto.CardSet
+	err := r.db.Collection(collectionCardSet).FindOne(ctx, filter).Decode(&cardSet)
 	if err != nil {
-		return nil, errors.Wrapf(err, "[FetchCardSet]: unable to retrieve card set with filter %v", sc.Filter)
+		return nil, errors.Wrapf(err, "[r.FetchCardSetByID]: unable to retrieve card set with filter %v", filter)
 	}
 
 	return &cardSet, nil
